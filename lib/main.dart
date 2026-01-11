@@ -6,6 +6,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'Ekrani/mapa.dart';
+
 
 
 //Funkcije
@@ -58,7 +60,7 @@ class PrijaviProblemApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Prijavi Problem',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 45, 103, 211)),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -140,6 +142,30 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.green[700],
         foregroundColor: Colors.white,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.amber),
+              child: Text("meni", style: TextStyle(color: Colors.white,fontSize: 25)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.map),
+              title: const Text("Mapa"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapaScreen()),
+                );
+              },
+
+            ),
+          ],
+              ),
+          
+        ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
