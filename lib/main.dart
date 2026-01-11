@@ -3,7 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
 import 'package:geocoding/geocoding.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 //Funkcije
@@ -38,8 +40,13 @@ Future<String> adresaIzKoordinata(double lat, double lng) async {
 
 
 // Glavni program
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const PrijaviProblemApp());
+  
 }
 
 class PrijaviProblemApp extends StatelessWidget {
