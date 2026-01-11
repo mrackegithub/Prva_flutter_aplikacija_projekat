@@ -2,7 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
+import 'package:geocoding/geocoding.dart';
 
+
+
+//Funkcije
+
+Future<String> adresaIzKoordinata(double lat, double lng) async {
+  try {
+    // 1. Dobij listu mogućih lokacija za te koordinate
+    List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    // 2. Uzmi prvu (najprecizniju) lokaciju
+    Placemark place = placemarks[0];
+
+    String address =
+        "${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}";
+    
+    return address;
+  } catch (e) {
+    return "Fejlovalo je: $e";
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// Glavni program
 void main() {
   runApp(const PrijaviProblemApp());
 }
@@ -35,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   File? _slika;
   String _statusPoruka = "Spremno za prijavu";
   String _koordinate = "";
-
+  String _lokacija = "";
   Future<void> _prijaviProblem() async {
     setState(() {
       _statusPoruka = "Dobijam lokaciju...";
@@ -63,20 +98,24 @@ class _HomePageState extends State<HomePage> {
       // 3. Dobijanje lokacije (Najsigurniji način)
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        
       );
 
       // 4. Kamera
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 50,
+        imageQuality: 100,
       );
 
       if (image != null) {
+        String adresa = await adresaIzKoordinata(position.latitude, position.longitude);
         setState(() {
           _slika = File(image.path);
           _koordinate = "Lat: ${position.latitude.toStringAsFixed(4)}, Long: ${position.longitude.toStringAsFixed(4)}";
-          _statusPoruka = "Problem uspešno zabeležen!";
+          _lokacija = adresa;
+          
+          _statusPoruka = " Problem prijavljen na lokaciji:\n$_lokacija";
         });
       } else {
         setState(() => _statusPoruka = "Slikanje otkazano.");
