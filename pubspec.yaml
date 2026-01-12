@@ -41,6 +41,7 @@ dependencies:
   flutter_map_location_marker: ^10.2.0
   latlong2: ^0.9.1
   flutter_map: ^8.2.2
+  cloud_firestore: ^6.1.1
 
 dev_dependencies:
   flutter_test:
