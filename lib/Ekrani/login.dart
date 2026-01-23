@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../services/auth_service.dart'; // <--- OBAVEZNO: Proveri da li je ova putanja tačna do tvog fajla!
+import '../services/auth_service.dart'; // 
 
 
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Auth Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          filled: true,
-          fillColor: Colors.grey[100],
-        ),
-      ),
-      home: const AuthPage(),
-    );
-  }
-}
+//class MyApp extends StatelessWidget {
+//  const MyApp({Key? key}) : super(key: key);
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return MaterialApp(
+//      title: 'Auth Demo',
+//      debugShowCheckedModeBanner: false,
+//      theme: ThemeData(
+//        primarySwatch: Colors.blue,
+//        inputDecorationTheme: InputDecorationTheme(
+//          border: OutlineInputBorder(
+//            borderRadius: BorderRadius.circular(12),
+//          ),
+//          filled: true,
+//          fillColor: Colors.grey[100],
+//        ),
+//      ),
+//      home: const AuthPage(),
+//    );
+//  }
+//}
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -80,15 +80,15 @@ class _AuthPageState extends State<AuthPage> {
           _emailController.text.trim(),
           _passwordController.text,
         );
-        _showSnackBar('Uspešno ulogovan!');
-        // Ovde navigiraj dalje, npr: Navigator.pushReplacementNamed(context, '/home');
+        
+        
       } else {
         // REGISTER LOGIKA
         await _authService.registerWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
-        );
-        _showSnackBar('Nalog kreiran! Uspešno ulogovan.');
+        );       
+        _showSnackBar("Uspesna registracija, proverite mail da verifikujete nalog.", isError: true);
       }
     } catch (e) {
       _showSnackBar(e.toString(), isError: true);
@@ -152,7 +152,7 @@ class _AuthPageState extends State<AuthPage> {
                     color: Theme.of(context).primaryColor,
                   ),
                   const SizedBox(height: 16),
-                  Text(
+                  Text(//welcome
                     isLogin ? 'Dobrodošli' : 'Kreiraj Nalog',
                     style: const TextStyle(
                       fontSize: 28,
@@ -160,8 +160,8 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),//razmak
+                  Text(//uloguj se/registruj se
                     isLogin
                         ? 'Uloguj se da nastaviš'
                         : 'Registruj se za početak',
@@ -171,7 +171,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 32),//razmak
                   
                   // Email Field
                   TextFormField(

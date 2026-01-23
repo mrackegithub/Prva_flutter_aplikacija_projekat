@@ -3,7 +3,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  var acs = ActionCodeSettings(
+    // URL na koji će korisnik biti poslat na webu (mora biti dodat u Firebase konzolu)
+    url: 'https://mtsprojekat-flutter.firebaseapp.com/', 
+    handleCodeInApp: true,
+    androidPackageName: 'com.example.flutter_aplikacija', // tvoj namespace iz build.gradle
+    androidInstallApp: true,
+    androidMinimumVersion: '12',
+);
   // Trenutni korisnik
   User? get currentUser => _auth.currentUser;
 
@@ -23,12 +30,13 @@ class AuthService {
 
       if (user != null) {
         // 2. Pošalji verifikacioni mejl
-        await user.sendEmailVerification();
-
+        await user.sendEmailVerification(acs);
+        await _auth.signOut();
         // 3. OBAVEZNO: Odmah ga izloguj
         // Firebase ga po defaultu uloguje pri registraciji, mi to prekidamo
-        await _auth.signOut();
+        
       }
+      
     } on FirebaseAuthException catch (e) {
       throw _handleFirebaseError(e);
     }

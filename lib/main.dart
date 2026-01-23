@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Your App',
+      title: 'Prijavi Problem',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -64,9 +64,11 @@ class AuthWrapper extends StatelessWidget {
         
         // Ako je korisnik ulogovan
         if (snapshot.hasData) {
-          return const HomePage();
+          User user = snapshot.data!;
+          if(user.emailVerified){
+            return const HomePage();
+          }
         }
-        
         // Ako nije ulogovan
         return const AuthPage();
       },
