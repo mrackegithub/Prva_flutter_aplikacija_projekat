@@ -45,7 +45,11 @@ class _AuthPageState extends State<AuthPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _surnameController = TextEditingController();
   
+
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -87,6 +91,8 @@ class _AuthPageState extends State<AuthPage> {
         await _authService.registerWithEmail(
           _emailController.text.trim(),
           _passwordController.text,
+          _nameController.text.trim(),
+          _surnameController.text.trim(),
         );       
         _showSnackBar("Uspesna registracija, proverite mail da verifikujete nalog.", isError: true);
       }
@@ -223,7 +229,38 @@ class _AuthPageState extends State<AuthPage> {
                       return null;
                     },
                   ),
-                  
+                  if(!isLogin) ...[
+                    const SizedBox(height: 16),
+                    // Name Field
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Ime',
+                        prefixIcon: Icon(Icons.person_outline),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesi ime';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Surname Field
+                    TextFormField(
+                      controller: _surnameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Prezime',
+                        prefixIcon: Icon(Icons.person_outline),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Unesi prezime';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                   // Confirm Password Field (samo za registraciju)
                   if (!isLogin) ...[
                     const SizedBox(height: 16),

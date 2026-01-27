@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'mapa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
-
+import '../services/cloudinary.dart';
 
 
 
@@ -79,18 +79,29 @@ class _HomePageState extends State<HomePage> {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 100,
+        imageQuality: 30,
       );
 
       if (image != null) {
-        String adresa = await adresaIzKoordinata(position.latitude, position.longitude);
+        File slikaFajl = File(image.path);
+        setState(() {
+           _slika = slikaFajl;
+           _statusPoruka = "Šaljem sliku na server..."; // Obaveštavamo korisnika
+        });
+        String? uploadedUrl = await uploadToCloudinary(slikaFajl);
+
+        if (uploadedUrl != null) {
+          String adresa = await adresaIzKoordinata(position.latitude, position.longitude);
         setState(() {
           _slika = File(image.path);
           _koordinate = "Lat: ${position.latitude.toStringAsFixed(4)}, Long: ${position.longitude.toStringAsFixed(4)}";
           _lokacija = adresa;
           
           _statusPoruka = " Problem prijavljen na lokaciji:\n$_lokacija";
-        });
+        }); 
+        }
+
+        
       } else {
         setState(() => _statusPoruka = "Slikanje otkazano.");
       }

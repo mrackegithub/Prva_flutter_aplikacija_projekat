@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,7 +19,7 @@ class AuthService {
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   // EMAIL/PASSWORD REGISTRACIJA
-  Future<void> registerWithEmail(String email, String password) async {
+  Future<void> registerWithEmail(String email, String password, String name, String surname) async {
     try {
       // 1. Kreiraj korisnika u Firebase-u
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -27,6 +28,13 @@ class AuthService {
       );
       
       User? user = result.user;
+      String uid = result.user!.uid;
+      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'name': name,
+      'surname': surname,
+      'email': email,
+      'registry_date': FieldValue.serverTimestamp(),
+    });
 
       if (user != null) {
         // 2. Pošalji verifikacioni mejl
