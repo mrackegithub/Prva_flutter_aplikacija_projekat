@@ -9,7 +9,7 @@ import 'mapa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 import '../services/cloudinary.dart';
-
+import '../services/gemini.dart';
 
 
 Future<String> adresaIzKoordinata(double lat, double lng) async {
@@ -41,16 +41,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GeminiService _geminiService = GeminiService();
+
   File? _slika;
   String _statusPoruka = "Spremno za prijavu";
   String _koordinate = "";
   String _lokacija = "";
+  String _analiza = "";
   Future<void> _prijaviProblem() async {
     setState(() {
       _statusPoruka = "Dobijam lokaciju...";
       _koordinate = "";
     });
-
+    
     try {
       // 1. Provera da li je GPS upaljen
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -92,11 +95,22 @@ class _HomePageState extends State<HomePage> {
 
         if (uploadedUrl != null) {
           String adresa = await adresaIzKoordinata(position.latitude, position.longitude);
-        setState(() {
+          setState(() {
           _slika = File(image.path);
           _koordinate = "Lat: ${position.latitude.toStringAsFixed(4)}, Long: ${position.longitude.toStringAsFixed(4)}";
           _lokacija = adresa;
-          
+          _geminiService.analizirajSliku(slikaFajl).then((analiza) {//valjda radi
+            if (analiza != null) {
+              setState(() {
+                _analiza = analiza;
+                _statusPoruka = "Problem prijavljen: $_analiza\nNa lokaciji:\n$_lokacija";
+              });
+            } else {
+              setState(() {
+                _statusPoruka = "Slika nije prepoznata kao komunalni problem.";
+              });
+            }
+          });
           _statusPoruka = " Problem prijavljen na lokaciji:\n$_lokacija";
         }); 
         }
