@@ -14,7 +14,7 @@ class AuthService {
 );
   // Trenutni korisnik
   User? get currentUser => _auth.currentUser;
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // Stream auth promena
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
@@ -23,25 +23,28 @@ class AuthService {
     try {
       // 1. Kreiraj korisnika u Firebase-u
       UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      email: email,
+      password: password,
       );
-      
+      String role = "user";
       User? user = result.user;
       String uid = result.user!.uid;
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      if(name=="admin"){
+        role="admin";
+      }
+      await _firestore.collection('users').doc(uid).set({
       'name': name,
       'surname': surname,
       'email': email,
+      'role': role,
       'registry_date': FieldValue.serverTimestamp(),
     });
 
       if (user != null) {
-        // 2. Pošalji verifikacioni mejl
+        // Pošalji verifikacioni mejl
         await user.sendEmailVerification(acs);
         await _auth.signOut();
-        // 3. OBAVEZNO: Odmah ga izloguj
-        // Firebase ga po defaultu uloguje pri registraciji, mi to prekidamo
+        
         
       }
       
@@ -53,7 +56,7 @@ class AuthService {
   // EMAIL/PASSWORD LOGIN
   Future<void> signInWithEmail(String email, String password) async {
     try {
-      // 1. Pokušaj logovanja
+      // Pokušaj logovanja
       UserCredential result = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -62,10 +65,10 @@ class AuthService {
       User? user = result.user;
 
       if (user != null) {
-        // 2. Osvježi podatke (da vidimo da li je u međuvremenu kliknuo link)
+        
         await user.reload();
         
-        // Moramo ponovo dohvatiti usera nakon reloada
+        
         User? refreshedUser = _auth.currentUser;
 
         // 3. Ako NIJE potvrdio, izbaci ga i javi grešku
@@ -90,13 +93,14 @@ class AuthService {
       if (GoogleSignIn.instance.supportsAuthenticate()) {
         // Koristi novi API (v7.x)
         googleUser = await GoogleSignIn.instance.authenticate();
+      }
       
-      
-      
-      
+      if (googleUser == null) {
+        return null;
+      }
 
       // Uzmi auth detalje
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       // Dobij tokene preko authorizationClient (novi način u v7.x)
       final authClient = GoogleSignIn.instance.authorizationClient;
@@ -104,14 +108,13 @@ class AuthService {
 
       // Kreiraj Firebase credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: authorization?.accessToken ,
+        accessToken: authorization?.accessToken,
         idToken: googleAuth.idToken,
       );
 
       // Uloguj se u Firebase
       return await _auth.signInWithCredential(credential);
-      
-    }} catch (e) {
+    } catch (e) {
       throw 'Google Sign-In greška: $e';
     }
   }

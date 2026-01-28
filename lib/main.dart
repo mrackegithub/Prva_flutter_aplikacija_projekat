@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
-import 'dart:io';
-import 'package:geocoding/geocoding.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_aplikacija/Ekrani/admin.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'Ekrani/mapa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Ekrani/login.dart';
-
 import 'Ekrani/login.dart';
 import 'Ekrani/user.dart';
 
@@ -18,6 +12,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
   runApp(const MyApp());
 }
 
@@ -35,7 +30,7 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: const Color.fromARGB(255, 8, 187, 47),
         ),
       ),
       home: const AuthWrapper(),
@@ -47,7 +42,25 @@ class MyApp extends StatelessWidget {
 // Ovo automatski proverava da li je korisnik ulogovan
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
-
+  
+  // Pomoćna funkcija za učitavanje role-a korisnika
+  Future<String> _getUserRole(String uid) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final doc = await firestore.collection('users').doc(uid).get();
+      
+      if (doc.exists) {
+        String role = doc.data()!['role'] as String;
+        print("Uloga korisnika: $role");
+        return role;
+      }
+      return "user";
+    } catch (e) {
+      print("Greška pri učitavanju role-a: $e");
+      return "user";
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -65,11 +78,39 @@ class AuthWrapper extends StatelessWidget {
         // Ako je korisnik ulogovan
         if (snapshot.hasData) {
           User user = snapshot.data!;
-          if(user.emailVerified){
-            return const HomePage();
+          String uid = user.uid;
+          
+          if (user.emailVerified) {
+            // Koristi FutureBuilder da čeka role
+            return FutureBuilder<String>(
+              future: _getUserRole(uid),
+              builder: (context, roleSnapshot) {
+                if (roleSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                
+                if (roleSnapshot.hasData) {
+                  String role = roleSnapshot.data!;
+                  
+                  if (role == "admin") {
+                    print("Admin ulogovan");
+                    return const AdminPage();
+                  } else {
+                    print("Korisnik ulogovan");
+                    return const HomePage();
+                  }
+                }
+                
+                return const HomePage();
+              },
+            );
           }
         }
-        // Ako nije ulogovan
+        
         return const AuthPage();
       },
     );
