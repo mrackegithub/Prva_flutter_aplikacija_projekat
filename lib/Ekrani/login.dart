@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart'; 
+import '../services/auth_service.dart';
+import 'complete_profile.dart';
+import 'welcome.dart'; 
 
 
 
@@ -107,15 +109,38 @@ class _AuthPageState extends State<AuthPage> {
     setState(() => _isLoading = true);
 
     try {
-      final user = await _authService.signInWithGoogle();
-      if (user != null) {
-        _showSnackBar('Google prijava uspešna!');
+      final result = await _authService.signInWithGoogleFirebase();
+      
+      final bool isNewUser = result['isNewUser'] ?? false;
+      
+      if (isNewUser) {
+        // Nov korisnik - preusmeri na complete profile stranicu
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => CompleteProfileScreen(
+                email: result['email'] ?? '',
+                displayName: result['displayName'],
+                photoUrl: result['photoUrl'],
+              ),
+            ),
+            (route) => false,
+          );
+        }
       } else {
-         // Korisnik je verovatno prekinuo login prozor
-        _showSnackBar('Prijava otkazana.', isError: true);
+        // Postojeći korisnik - preusmeri na welcome
+        if (mounted) {
+          _showSnackBar('Dobrodošli!');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            (route) => false,
+          );
+        }
       }
     } catch (e) {
-      _showSnackBar(e.toString(), isError: true);
+      if (mounted) {
+        _showSnackBar(e.toString(), isError: true);
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

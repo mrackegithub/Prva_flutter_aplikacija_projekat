@@ -73,14 +73,14 @@ class _HomePageState extends State<HomePage> {
     });
     
     try {
-      // 1. Provera da li je GPS upaljen
+      //Provera da li je GPS upaljen
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() => _statusPoruka = "Molim te uključi GPS!");
         return;
       }
 
-      // 2. Dozvole
+      //Dozvole
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
         }
       }
 
-      // 3. Dobijanje lokacije
+      //Dobijanje lokacije
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );

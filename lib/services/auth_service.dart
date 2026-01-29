@@ -15,6 +15,131 @@ class AuthService {
   // Trenutni korisnik
   User? get currentUser => _auth.currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final _googleSignIn = GoogleSignIn.instance;
+  bool _isGoogleSignInInitialized = false;
+  AuthService() {
+    _initializeGoogleSignIn();
+  }
+
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      await _googleSignIn.initialize();
+      _isGoogleSignInInitialized = true;
+    } catch (e) {
+      print('Failed to initialize Google Sign-In: $e');
+    }
+  }
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (!_isGoogleSignInInitialized) {
+      await _initializeGoogleSignIn();
+    }
+  }
+  Future<GoogleSignInAccount> signInWithGoogle() async {
+  await _ensureGoogleSignInInitialized();
+
+  try {
+    // authenticate() throws exceptions instead of returning null
+    final GoogleSignInAccount account = await _googleSignIn.authenticate(
+      scopeHint: ['email'],  // Specify required scopes
+    );
+    return account;
+  } on GoogleSignInException catch (e) {
+    print('Google Sign-In error: $e');
+    rethrow;
+  } catch (error) {
+    print('Unexpected Google Sign-In error: $error');
+    rethrow;
+  }
+}
+Future<GoogleSignInAccount?> attemptSilentSignIn() async {
+  await _ensureGoogleSignInInitialized();
+
+  try {
+    // attemptLightweightAuthentication can return Future or immediate result
+    final result = _googleSignIn.attemptLightweightAuthentication();
+
+    // Handle both sync and async returns
+    if (result is Future<GoogleSignInAccount?>) {
+      return await result;
+    } else {
+      return result as GoogleSignInAccount?;
+    }
+  } catch (error) {
+    print('Silent sign-in failed: $error');
+    return null;
+  }
+}
+GoogleSignInAuthentication getAuthTokens(GoogleSignInAccount account) {
+  // authentication is now synchronous
+  return account.authentication;
+}
+GoogleSignInAccount? _currentGoogleUser;
+
+bool get isSignedIn => _currentGoogleUser != null;
+
+Future<void> signIn() async {
+  try {
+    _currentGoogleUser = await signInWithGoogle();
+  } catch (error) {
+    _currentGoogleUser = null;
+    rethrow;
+  }
+}
+Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
+  await _ensureGoogleSignInInitialized();
+
+  try {
+    // Authenticate with Google
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+      scopeHint: ['email'],
+    );
+
+    // Get authorization tokens
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    // Create Firebase credential - idToken je dovoljan za Google OAuth
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+
+    // Sign in to Firebase
+    final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+    // Update local state
+    _currentGoogleUser = googleUser;
+
+    // Check if new user
+    bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
+
+    return {
+      'userCredential': userCredential,
+      'isNewUser': isNewUser,
+      'displayName': googleUser.displayName,
+      'email': googleUser.email,
+      'photoUrl': googleUser.photoUrl,
+    };
+  } catch (e) {
+    print('Google Firebase Sign-In error: $e');
+    rethrow;
+  }
+}
+  
+  // Sačuvaj Google korisnika u Firestore
+  Future<void> saveGoogleUser(String uid, String email, String name, String surname) async {
+    try {
+      await _firestore.collection('users').doc(uid).set({
+        'name': name,
+        'surname': surname,
+        'email': email,
+        'role': 'user',
+        'registry_date': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error saving Google user: $e');
+      rethrow;
+    }
+  }
+
   // Stream auth promena
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
@@ -84,40 +209,7 @@ class AuthService {
     }
   }
 
-  // GOOGLE SIGN-IN - ZA VERZIJU 7.2.0
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      GoogleSignInAccount? googleUser;
-      
-      // Proveri da li platforma podržava authenticate()
-      if (GoogleSignIn.instance.supportsAuthenticate()) {
-        // Koristi novi API (v7.x)
-        googleUser = await GoogleSignIn.instance.authenticate();
-      }
-      
-      if (googleUser == null) {
-        return null;
-      }
-
-      // Uzmi auth detalje
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-      // Dobij tokene preko authorizationClient (novi način u v7.x)
-      final authClient = GoogleSignIn.instance.authorizationClient;
-      final authorization = await authClient.authorizationForScopes(['email']);
-
-      // Kreiraj Firebase credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: authorization?.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Uloguj se u Firebase
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      throw 'Google Sign-In greška: $e';
-    }
-  }
+ 
 
   // PASSWORD RESET
   Future<void> resetPassword(String email) async {
@@ -130,7 +222,8 @@ class AuthService {
 
   // SIGN OUT
   Future<void> signOut() async {
-    await GoogleSignIn.instance.signOut();
+    await _googleSignIn.signOut();
+    _currentGoogleUser = null;
     await _auth.signOut();
   }
 
