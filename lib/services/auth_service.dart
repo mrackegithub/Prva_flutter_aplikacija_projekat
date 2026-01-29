@@ -15,7 +15,10 @@ class AuthService {
   // Trenutni korisnik
   User? get currentUser => _auth.currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  // GoogleSignIn instanca
   final _googleSignIn = GoogleSignIn.instance;
+  
   bool _isGoogleSignInInitialized = false;
   AuthService() {
     _initializeGoogleSignIn();
@@ -23,6 +26,7 @@ class AuthService {
 
   Future<void> _initializeGoogleSignIn() async {
     try {
+      // Inicijalizuj Google Sign-In bez serverClientId (biće dodat u android build-u)
       await _googleSignIn.initialize();
       _isGoogleSignInInitialized = true;
     } catch (e) {
@@ -38,17 +42,15 @@ class AuthService {
   await _ensureGoogleSignInInitialized();
 
   try {
-    // authenticate() throws exceptions instead of returning null
-    final GoogleSignInAccount account = await _googleSignIn.authenticate(
-      scopeHint: ['email'],  // Specify required scopes
-    );
+    // authenticate() je validna metoda u v6.3.0
+    final GoogleSignInAccount account = await _googleSignIn.authenticate();
     return account;
   } on GoogleSignInException catch (e) {
-    print('Google Sign-In error: $e');
-    rethrow;
+    print('Google Sign-In exception: $e');
+    throw Exception('canceled');
   } catch (error) {
     print('Unexpected Google Sign-In error: $error');
-    rethrow;
+    throw Exception('canceled');
   }
 }
 Future<GoogleSignInAccount?> attemptSilentSignIn() async {
@@ -86,13 +88,9 @@ Future<void> signIn() async {
   }
 }
 Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
-  await _ensureGoogleSignInInitialized();
-
   try {
-    // Authenticate with Google
-    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
-      scopeHint: ['email'],
-    );
+    // Koristi signInWithGoogle() koja koristi signIn() umesto authenticate()
+    final GoogleSignInAccount googleUser = await signInWithGoogle();
 
     // Get authorization tokens
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;

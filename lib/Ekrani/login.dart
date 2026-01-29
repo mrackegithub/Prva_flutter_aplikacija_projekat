@@ -137,9 +137,15 @@ class _AuthPageState extends State<AuthPage> {
           );
         }
       }
-    } catch (e) {
-      if (mounted) {
-        _showSnackBar(e.toString(), isError: true);
+    } on Exception catch (e) {
+      // Proverite da li je korisnik otkazao login
+      if (e.toString().contains('canceled')) {
+        // Korisnik je otkazao - ne pokazuj error
+        print('Login otkazan od strane korisnika');
+      } else {
+        if (mounted) {
+          _showSnackBar(e.toString(), isError: true);
+        }
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
