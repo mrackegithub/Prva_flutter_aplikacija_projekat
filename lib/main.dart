@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_aplikacija/Ekrani/admin.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Ekrani/login.dart';
-import 'Ekrani/user.dart';
+import 'Ekrani/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,14 +97,14 @@ class AuthWrapper extends StatelessWidget {
                   
                   if (role == "admin") {
                     print("Admin ulogovan");
-                    return const AdminPage();
+                    return const WelcomeScreen();
                   } else {
                     print("Korisnik ulogovan");
-                    return const HomePage();
+                    return const WelcomeScreen();
                   }
                 }
                 
-                return const HomePage();
+                return const WelcomeScreen();
               },
             );
           }
