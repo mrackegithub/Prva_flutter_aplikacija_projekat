@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           filled: true,
-          fillColor: const Color.fromARGB(255, 8, 187, 47),
+          fillColor: const Color.fromARGB(255, 250, 250, 250),
         ),
       ),
       home: const AuthWrapper(),

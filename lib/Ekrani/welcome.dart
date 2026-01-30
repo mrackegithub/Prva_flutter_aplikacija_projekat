@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 import 'user.dart';
-import 'community_problems.dart';
+import 'my_problems.dart';
+import 'available_problems.dart';
+import 'mapa.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -157,14 +159,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(height: 15),
                   _buildMenuButton(
-                    icon: Icons.list_alt,
-                    label: 'Vidi Probleme',
-                    description: 'Pregled svih prijavljenih komunalnih problema',
+                    icon: Icons.volunteer_activism,
+                    label: 'Dostupni Problemi',
+                    description: 'Problemi gde ljudi trebaju pomoć',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const CommunityProblemsScreen(),
+                          builder: (context) => const AvailableProblemsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  _buildMenuButton(
+                    icon: Icons.my_library_books,
+                    label: 'Moji Problemi',
+                    description: 'Pregled tvojih postavljenih problema',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyProblemsScreen(),
                         ),
                       );
                     },
@@ -278,14 +294,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.list_alt, color: Colors.blue[600]),
-            title: const Text('Vidi Probleme'),
+            leading: Icon(Icons.volunteer_activism, color: Colors.orange[600]),
+            title: const Text('Dostupni Problemi'),
+            subtitle: const Text('Gde trebam pomoć'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CommunityProblemsScreen(),
+                  builder: (context) => const AvailableProblemsScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.my_library_books, color: Colors.purple[600]),
+            title: const Text('Moji Problemi'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyProblemsScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.map, color: Colors.teal[600]),
+            title: const Text('Mapa'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MapaScreen(),
                 ),
               );
             },

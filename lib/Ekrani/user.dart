@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
   String _statusPoruka = "Spremno za prijavu";
   String _koordinate = "";
   bool _isSubmitting = false;
+  bool _needsHelp = false;  // Novo: označava da problem potrebuje pomoć
 
   @override
   void dispose() {
@@ -125,6 +126,7 @@ class _HomePageState extends State<HomePage> {
               'imageUrl': uploadedUrl,
               'status': 'pending',
               'timestamp': DateTime.now(),
+              'needsHelp': _needsHelp,  // Novo: da li problem potrebuje pomoć
             });
 
             if (mounted) {
@@ -368,6 +370,38 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Checkbox za pomoć
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.green[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _needsHelp,
+                          onChanged: (value) {
+                            setState(() => _needsHelp = value ?? false);
+                          },
+                          activeColor: Colors.green[600],
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Trebam pomoć - prikaži sve korisnike',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green[800],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
 
