@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login.dart';
 import 'mapa.dart';
 
 class AdminPage extends StatefulWidget {
@@ -737,7 +736,7 @@ class _AdminPageState extends State<AdminPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Odjava'),
-        content: const Text('Да ли si siguran da želiš da se odjaviš?'),
+        content: const Text('Da li si siguran da želiš da se odjaviš?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -747,10 +746,8 @@ class _AdminPageState extends State<AdminPage> {
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               if (mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const AuthPage()),
-                  (route) => false,
-                );
+                Navigator.pop(context); // Zatvori dialog
+                Navigator.pop(context); // Vrati se sa admin stranice
               }
             },
             style: ElevatedButton.styleFrom(

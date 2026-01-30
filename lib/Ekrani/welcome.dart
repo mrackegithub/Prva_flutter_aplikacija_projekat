@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login.dart';
+import '../services/auth_service.dart';
 import 'user.dart';
 import 'my_problems.dart';
 import 'available_problems.dart';
@@ -18,6 +18,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   late User _currentUser;
   String _userName = '';
   int _problemCount = 0;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -55,13 +56,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const AuthPage()),
-        (route) => false,
-      );
-    }
+    await _authService.signOut();
   }
 
   @override

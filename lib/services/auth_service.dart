@@ -109,6 +109,16 @@ Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
     // Check if new user
     bool isNewUser = userCredential.additionalUserInfo?.isNewUser ?? false;
 
+    
+    if (isNewUser && userCredential.user != null) {
+      await saveGoogleUser(
+        userCredential.user!.uid,
+        googleUser.email,
+        googleUser.displayName ?? 'Google Korisnik',
+        '', // Prezime će biti popunjeno u kompletan profilu
+      );
+    }
+
     return {
       'userCredential': userCredential,
       'isNewUser': isNewUser,
@@ -199,6 +209,9 @@ Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
           await _auth.signOut();
           throw 'Vaš email nije verifikovan. Proverite inbox pre prijave.';
         }
+        
+        // Čekaj malo da se stream osvezi
+        await Future.delayed(const Duration(milliseconds: 100));
       }
     } on FirebaseAuthException catch (e) {
       throw _handleFirebaseError(e);
@@ -223,6 +236,7 @@ Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
     await _googleSignIn.signOut();
     _currentGoogleUser = null;
     await _auth.signOut();
+    
   }
 
   // ERROR HANDLING

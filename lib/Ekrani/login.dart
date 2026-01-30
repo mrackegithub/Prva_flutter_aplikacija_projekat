@@ -1,32 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import 'complete_profile.dart';
-import 'welcome.dart'; 
-
-
-
-//class MyApp extends StatelessWidget {
-//  const MyApp({Key? key}) : super(key: key);
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return MaterialApp(
-//      title: 'Auth Demo',
-//      debugShowCheckedModeBanner: false,
-//      theme: ThemeData(
-//        primarySwatch: Colors.blue,
-//        inputDecorationTheme: InputDecorationTheme(
-//          border: OutlineInputBorder(
-//            borderRadius: BorderRadius.circular(12),
-//          ),
-//          filled: true,
-//          fillColor: Colors.grey[100],
-//        ),
-//      ),
-//      home: const AuthPage(),
-//    );
-//  }
-//}
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -110,33 +83,12 @@ class _AuthPageState extends State<AuthPage> {
 
     try {
       final result = await _authService.signInWithGoogleFirebase();
-      
-      final bool isNewUser = result['isNewUser'] ?? false;
-      
-      if (isNewUser) {
-        // Nov korisnik - preusmeri na complete profile stranicu
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => CompleteProfileScreen(
-                email: result['email'] ?? '',
-                displayName: result['displayName'],
-                photoUrl: result['photoUrl'],
-              ),
-            ),
-            (route) => false,
-          );
-        }
-      } else {
-        // Postojeći korisnik - preusmeri na welcome
+        // Postojeći korisnik - AuthWrapper će detektovati promenu i prikazati welcome
         if (mounted) {
           _showSnackBar('Dobrodošli!');
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-            (route) => false,
-          );
+          Navigator.of(context).pop();
         }
-      }
+      
     } on Exception catch (e) {
       // Proverite da li je korisnik otkazao login
       if (e.toString().contains('canceled')) {

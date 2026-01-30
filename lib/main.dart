@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_aplikacija/Ekrani/admin.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -67,8 +66,11 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        print("AuthWrapper - ConnectionState: ${snapshot.connectionState}, HasData: ${snapshot.hasData}");
+        
         // Ako se još učitava
         if (snapshot.connectionState == ConnectionState.waiting) {
+          print("AuthWrapper - Čekam...");
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -109,9 +111,12 @@ class AuthWrapper extends StatelessWidget {
                 return const WelcomeScreen();
               },
             );
+          } else {
+            print("AuthWrapper - Email NIJE verifikovan, vraćam AuthPage");
           }
         }
         
+        print("AuthWrapper - Nema korisnika, vraćam AuthPage");
         return const AuthPage();
       },
     );

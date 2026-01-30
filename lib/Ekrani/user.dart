@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:geocoding/geocoding.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login.dart';
 import '../services/cloudinary.dart';
 import '../services/gemini.dart';
 
@@ -535,10 +534,7 @@ class _HomePageState extends State<HomePage> {
               try {
                 await FirebaseAuth.instance.signOut();
                 if (mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const AuthPage()),
-                    (route) => false,
-                  );
+                  Navigator.of(context).pop();
                 }
               } catch (e) {
                 _showSnackBar('Greška pri logoutu: $e', isError: true);
