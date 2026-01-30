@@ -67,17 +67,9 @@ class _AdminPageState extends State<AdminPage> {
                 children: [
                   _buildSidebarItem(
                     icon: Icons.dashboard,
-                    label: 'Sve probleme',
+                    label: 'Svi problemi',
                     onTap: () {
                       setState(() => _selectedStatus = 'Svi');
-                      Navigator.pop(context);
-                    },
-                  ),
-                  _buildSidebarItem(
-                    icon: Icons.pending_actions,
-                    label: 'Aktivni problemi',
-                    onTap: () {
-                      setState(() => _selectedStatus = 'Aktivni');
                       Navigator.pop(context);
                     },
                   ),
@@ -476,7 +468,7 @@ class _AdminPageState extends State<AdminPage> {
               ),
               const SizedBox(height: 12),
               _detailRow(
-                'Trebam pomoć:',
+                'Potrebna pomoć:',
                 (data['needsHelp'] as bool?) ?? false ? 'DA' : 'NE',
               ),
               if (data['imageUrl'] != null) ...[

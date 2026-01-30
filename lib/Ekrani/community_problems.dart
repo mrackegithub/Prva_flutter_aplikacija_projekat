@@ -31,8 +31,6 @@ class _CommunityProblemsScreenState extends State<CommunityProblemsScreen> {
                 children: [
                   _buildFilterButton('Aktivni', 'pending'),
                   const SizedBox(width: 10),
-                  _buildFilterButton('U Toku', 'in_progress'),
-                  const SizedBox(width: 10),
                   _buildFilterButton('Rešeni', 'resolved'),
                 ],
               ),

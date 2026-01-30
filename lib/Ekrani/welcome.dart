@@ -142,7 +142,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   _buildMenuButton(
                     icon: Icons.add_circle_outline,
                     label: 'Prijavi Problem',
-                    description: 'Fotografiraj i prijavi komunalni problem',
+                    description: 'Slikaj i prijavi komunalni problem',
                     onTap: () {
                       Navigator.push(
                         context,
