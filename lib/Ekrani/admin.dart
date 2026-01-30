@@ -645,13 +645,7 @@ class _AdminPageState extends State<AdminPage> {
                   }
 
                   final docs = snapshot.data!.docs;
-                  int ukupno = docs.length;
-                  int aktivni = docs
-                      .where((d) =>
-                          ((d.data() as Map)['status'] as String?)
-                              ?.toLowerCase() ==
-                          'aktivni')
-                      .length;
+                  int ukupno = docs.length;                  
                   int reseni = docs
                       .where((d) =>
                           ((d.data() as Map)['status'] as String?)
