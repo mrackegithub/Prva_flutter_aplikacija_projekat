@@ -18,7 +18,7 @@ class GeminiService {
       final bytes = await imageFile.readAsBytes();
       final content = [
         Content.multi([
-          TextPart("Opisi sliku"),
+          TextPart("Odmah proveri sliku. Ako na slici nema komunalnog, ekološkog, socijalnog ili sličnog problema koji bi se prijavio komunalnoj inspekciji,gradskim vlastima, ekološkoj inspekciji, zelenoj liniji ili komunalnoj policiji napiši SAMO i ISKLJUČIVO: ODBIJENO. Ako postoji takav problem napiši kratak opis problema na srpskom jeziku maksimalno 3 rečenice. Ne piši ništa drugo, ne objašnjavaj, ne dodaj uvod, ne piši „mislim da“, „verovatno“, „nema problema“ niti bilo kakav dodatni tekst osim ODBIJENO ili opisa."),
           DataPart('image/jpeg', bytes),
         ])
       ];
