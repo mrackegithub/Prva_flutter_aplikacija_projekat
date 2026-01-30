@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'mapa.dart';
-
+import '../services/auth_service.dart';
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
 
   @override
   State<AdminPage> createState() => _AdminPageState();
 }
-
+final AuthService _authService = AuthService();
+ Future<void> _signOut() async {
+    await _authService.signOut();
+  }
 class _AdminPageState extends State<AdminPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _selectedStatus = 'Svi';
@@ -22,14 +25,7 @@ class _AdminPageState extends State<AdminPage> {
         title: const Text('Admin Panel'),
         backgroundColor: const Color(0xFF4CAF50),
         foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-            tooltip: 'Odjavi se',
-          ),
-        ],
+        elevation: 0,       
       ),
       drawer: Drawer(
         child: Column(
@@ -92,7 +88,7 @@ class _AdminPageState extends State<AdminPage> {
                         MaterialPageRoute(builder: (_) => const MapaScreen()),
                       );
                     },
-                  ),
+                  ),                 
                   _buildSidebarItem(
                     icon: Icons.analytics,
                     label: 'Statistika',
@@ -101,6 +97,14 @@ class _AdminPageState extends State<AdminPage> {
                       _showStatistike();
                     },
                   ),
+                  _buildSidebarItem(
+                    icon: Icons.logout,
+                   label: 'Odjavi se',
+                    onTap: () async {
+              Navigator.pop(context);
+              await _signOut();
+            },
+         ),
                 ],
               ),
             ),
@@ -121,8 +125,6 @@ class _AdminPageState extends State<AdminPage> {
                     child: Row(
                       children: [
                         _buildFilterButton('Svi'),
-                        const SizedBox(width: 8),
-                        _buildFilterButton('Aktivni'),
                         const SizedBox(width: 8),
                         _buildFilterButton('Rešeni'),
                       ],
@@ -664,12 +666,10 @@ class _AdminPageState extends State<AdminPage> {
                   return Column(
                     children: [
                       _statCard('Ukupno problema', ukupno.toString(), Colors.blue),
-                      const SizedBox(height: 12),
-                      _statCard('Aktivnih', aktivni.toString(), Colors.orange),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 12),                     
                       _statCard('Rešenih', reseni.toString(), Colors.green),
                       const SizedBox(height: 12),
-                      _statCard('Trebaju pomoć', trebaJuPomoc.toString(), Colors.purple),
+                      _statCard('Potrebna pomoć', trebaJuPomoc.toString(), Colors.purple),
                     ],
                   );
                 },
@@ -723,32 +723,5 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
-  void _logout() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Odjava'),
-        content: const Text('Da li si siguran da želiš da se odjaviš?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Otkaži'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (mounted) {
-                Navigator.pop(context); // Zatvori dialog
-                Navigator.pop(context); // Vrati se sa admin stranice
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: const Text('Odjavi se', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+  
 }

@@ -29,7 +29,7 @@ class _CommunityProblemsScreenState extends State<CommunityProblemsScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildFilterButton('Aktivni', 'pending'),
+                  _buildFilterButton('Svi', 'pending'),
                   const SizedBox(width: 10),
                   _buildFilterButton('Rešeni', 'resolved'),
                 ],
@@ -60,7 +60,7 @@ class _CommunityProblemsScreenState extends State<CommunityProblemsScreen> {
                             size: 80, color: Colors.grey[300]),
                         const SizedBox(height: 20),
                         Text(
-                          'Nema probleme u ovoj kategoriji',
+                          'Nema problema u ovoj kategoriji',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey[600],

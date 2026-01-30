@@ -391,7 +391,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Expanded(
                           child: Text(
-                            'Trebam pomoć - prikaži sve korisnike',
+                            'Prikazi svim korisnicima da mi je potrebna pomoć oko rešavanja ovog problema',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.green[800],
@@ -515,13 +515,6 @@ class _HomePageState extends State<HomePage> {
             title: const Text('Početna'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.list_alt, color: Colors.blue[600]),
-            title: const Text('Vidi Probleme'),
-            onTap: () {
               Navigator.pop(context);
             },
           ),

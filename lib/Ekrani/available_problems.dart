@@ -33,8 +33,6 @@ class _AvailableProblemsScreenState extends State<AvailableProblemsScreen> {
                 children: [
                   _buildFilterButton('Svi'),
                   const SizedBox(width: 8),
-                  _buildFilterButton('Aktivni'),
-                  const SizedBox(width: 8),
                   _buildFilterButton('Rešeni'),
                 ],
               ),
