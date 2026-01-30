@@ -470,7 +470,7 @@ class _AdminPageState extends State<AdminPage> {
               ),
               const SizedBox(height: 12),
               _detailRow(
-                'Potrebna pomoć:',
+                'Potrebna pomoć zajednice:',
                 (data['needsHelp'] as bool?) ?? false ? 'DA' : 'NE',
               ),
               if (data['imageUrl'] != null) ...[

@@ -33,9 +33,7 @@ class _MyProblemsScreenState extends State<MyProblemsScreen> {
               child: Row(
                 children: [
                   _buildFilterButton('Svi'),
-                  const SizedBox(width: 8),
-                  _buildFilterButton('Aktivni'),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 8),               
                   _buildFilterButton('Rešeni'),
                 ],
               ),

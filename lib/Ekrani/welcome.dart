@@ -109,21 +109,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildStatCard(
-                    'Aktivni problemi',
-                    _problemCount.toString(),
-                    Icons.error_outline,
-                    Colors.orange,
-                  ),
-                  _buildStatCard(
-                    'Tvoja prijava',
-                    '0',
-                    Icons.check_circle_outline,
-                    Colors.green,
-                  ),
-                ],
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,               
               ),
             ),
             const SizedBox(height: 40),
@@ -156,7 +142,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   _buildMenuButton(
                     icon: Icons.volunteer_activism,
                     label: 'Dostupni Problemi',
-                    description: 'Problemi gde ljudi trebaju pomoć',
+                    description: 'Problemi gde ljudima treba pomoć',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -291,7 +277,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ListTile(
             leading: Icon(Icons.volunteer_activism, color: Colors.orange[600]),
             title: const Text('Dostupni Problemi'),
-            subtitle: const Text('Gde trebam pomoć'),
+            subtitle: const Text('Gde je potrebna pomoć'),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
