@@ -115,7 +115,7 @@ Future<Map<String, dynamic>> signInWithGoogleFirebase() async {
         userCredential.user!.uid,
         googleUser.email,
         googleUser.displayName ?? 'Google Korisnik',
-        '', // Prezime će biti popunjeno u kompletan profilu
+        '', 
       );
     }
 
