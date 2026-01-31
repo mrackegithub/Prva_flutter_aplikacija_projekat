@@ -145,11 +145,6 @@ Za pitanja i suradnju kontaktirajte lead developera ili otvorite issue u repozit
 
 ---
 
-Ako želite, mogu:
-- prevesti README na engleski
-- dodati konkretne upute za CI/CD ili GitHub Actions
-- prilagoditi upute specifičnim Firebase postavkama vašeg projekta
-# flutter_aplikacija
 
 School project, a flutter app used for reporting ecological, social and other types of problems.
 
