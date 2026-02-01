@@ -53,3 +53,5 @@ app.*.map.json
 linux/flutter/
 windows/flutter/
 macos/Flutter/GeneratedPluginRegistrant.swift
+#api
+.env

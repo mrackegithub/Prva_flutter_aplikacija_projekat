@@ -48,6 +48,7 @@ dependencies:
   cloudinary_url_gen: ^1.8.0
   http: ^1.6.0 
   google_generative_ai: ^0.4.5
+  flutter_dotenv: ^6.0.0
   
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - .env
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
